@@ -25,10 +25,10 @@ OMSAGENT_CONF_TEXT = """
 
 <match oms.api.audit>
   type out_oms_api
-  log_level trace
+  log_level info
   buffer_chunk_limit 1m
   buffer_type file
-  buffer_path /var/opt/microsoft/omsagent/state/out_oms_api_auoms.buffer
+  buffer_path /var/opt/microsoft/omsagent/state/out_oms_api_auoms*.buffer
   buffer_queue_limit 5
   buffer_queue_full_action drop_oldest_chunk
   flush_interval 20s
@@ -88,9 +88,7 @@ def Set(Ensure):
     if exit_code != 0:
         out_txt = proc.stdout.read().decode('utf8','replace').encode('utf8','replace')
         err_txt = proc.stderr.read().decode('utf8','replace').encode('utf8','replace')
-        print("stdout: " + out_txt)
         LG().Log('INFO', "stdout: " + out_txt)
-        print("stderr: " + err_txt)
         LG().Log('INFO', "stderr: " + err_txt)
 
     return [exit_code]
@@ -132,9 +130,7 @@ def IsPluginEnabled():
     if exit_code < 0 or exit_code > 2:
         out_txt = proc.stdout.read().decode('utf8','replace').encode('utf8','replace')
         err_txt = proc.stderr.read().decode('utf8','replace').encode('utf8','replace')
-        print("stdout: " + out_txt)
         LG().Log('INFO', "stdout: " + out_txt)
-        print("stderr: " + err_txt)
         LG().Log('INFO', "stderr: " + err_txt)
         return None
 
