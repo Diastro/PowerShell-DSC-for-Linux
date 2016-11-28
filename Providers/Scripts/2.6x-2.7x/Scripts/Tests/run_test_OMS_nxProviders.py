@@ -94,7 +94,13 @@ if not os.path.exists('/etc/opt/omi/conf/omsconfig/rsyslog-oms.conf'):
 if os.path.exists('/etc/rsyslog.d/'):
     os.system('cp /etc/opt/omi/conf/omsconfig/rsyslog-oms.conf /etc/rsyslog.d/95-omsagent.conf')
     os.system('chown omsagent:omsagent /etc/rsyslog.d/95-omsagent.conf')
-
+os.system('mkdir -p /etc/opt/microsoft/omsagent/conf/')
+os.system('touch /etc/opt/microsoft/omsagent/conf/omsagent.conf')
+os.system('chown -R omsagent /etc/opt/microsoft/omsagent/conf/')
+os.system('mkdir -p /opt/microsoft/omsagent/bin')
+os.system('/bin/echo -e "#!/bin/bash\necho \n" > /opt/microsoft/omsagent/bin/service_control')
+os.system('chmod +x /opt/microsoft/omsagent/bin/service_control')
+'/opt/microsoft/omsagent/bin/service_control'
 os.system('chown -R omsagent /var/opt/microsoft/omsconfig')
 os.system('chmod +w  omsagent /etc/opt/omi/conf/omsconfig/*')
 os.system('chown -R omsagent /etc/opt/omi/conf/omsconfig')

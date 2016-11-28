@@ -971,31 +971,25 @@ class nxOMSCustomLogTestCases(unittest2.TestCase):
         self.assertTrue(check_values(g, m)  ==  True, \
         'Get('+repr(g)+' should return ==['+repr(m)+']')
     
-
 nxOMSKeyMgmt_cls_setup_txt = """import os
-key_txt = (open('./Scripts/Tests/test_mofs/testdsckey.pub','r').read())
-sig_txt = (open('./Scripts/Tests/test_mofs/testdsckey.asc','r').read())
-cls.keymgmt = {'KeyContents': key_txt, \
-               'KeySignature': sig_txt, 'Ensure':'present'}
-cls.conf_dir = '/etc/opt/omi/conf/omsconfig'
 if not os.path.exists(cls.conf_dir):
     os.system('mkdir -p ' + cls.conf_dir + ' 2>&1 >/dev/null')
-os.system('cp -a ' + nxOMSKeyMgmt.signature_keyring_path + ' ' + \
-          nxOMSKeyMgmt.signature_keyring_path +  '.bak 2>&1 >/dev/null')
-os.system('cp -a ' + nxOMSKeyMgmt.dsc_keyring_path + ' ' + \
-          nxOMSKeyMgmt.dsc_keyring_path +  '.bak 2>&1 >/dev/null')
+os.system('cp -a  /etc/opt/omi/conf/omsconfig/keymgmtring.gpg  \
+          /etc/opt/omi/conf/omsconfig/keymgmtring.gpg.bak 2>&1 >/dev/null')
+os.system('cp -a /etc/opt/omi/conf/omsconfig/keyring.gpg \
+          /etc/opt/omi/conf/omsconfig/keyring.gpg.bak 2>&1 >/dev/null')
 """
 nxOMSKeyMgmt_cls_teardown_txt = """import os
-os.system('cp -a ' + nxOMSKeyMgmt.signature_keyring_path + '.bak ' + \
-nxOMSKeyMgmt.signature_keyring_path + '2>&1 >/dev/null')
-os.system('cp -a ' + nxOMSKeyMgmt.dsc_keyring_path + '.bak ' + \
-nxOMSKeyMgmt.dsc_keyring_path +  ' 2>&1 >/dev/null')
+os.system('cp -a /etc/opt/omi/conf/omsconfig/keymgmtring.gpg.bak \
+/etc/opt/omi/conf/omsconfig/keymgmtring.gpg 2>&1 >/dev/null')
+os.system('cp -a /etc/opt/omi/conf/omsconfig/keyring.gpg.bak \
+/etc/opt/omi/conf/omsconfig/keyring.gpg 2>&1 >/dev/null')
 """
 nxOMSKeyMgmt_setup_txt = """import os
-os.system('cp -a ./Scripts/Tests/test_mofs/keymgmtring.gpg ' + \
-nxOMSKeyMgmt.signature_keyring_path +  ' 2>&1 >/dev/null')
-os.system('cp -a ./Scripts/Tests/test_mofs/keyring.gpg ' + \
-nxOMSKeyMgmt.dsc_keyring_path +  ' 2>&1 >/dev/null')
+os.system('cp -a ./Scripts/Tests/test_mofs/keymgmtring.gpg \
+/etc/opt/omi/conf/omsconfig/keymgmtring.gpg 2>&1 >/dev/null')
+os.system('cp -a ./Scripts/Tests/test_mofs/keyring.gpg \
+/etc/opt/omi/conf/omsconfig/keyring.gpg 2>&1 >/dev/null')
 """
 
 # omsagent is not required to  be running.
@@ -1005,7 +999,12 @@ class nxOMSKeyMgmtTestCases(unittest2.TestCase):
     """
     @classmethod    
     def setUpClass(cls):
+        key_txt = (open('./Scripts/Tests/test_mofs/testdsckey.pub','r').read())
+        sig_txt = (open('./Scripts/Tests/test_mofs/testdsckey.asc','r').read())
         os.system('/bin/echo -e "' + nxOMSKeyMgmt_cls_setup_txt + '" | sudo python')
+        cls.keymgmt = {'KeyContents': key_txt, \
+                       'KeySignature': sig_txt, 'Ensure':'present'}
+        cls.conf_dir = '/etc/opt/omi/conf/omsconfig'
 
     @classmethod
     def tearDownClass(cls):
@@ -1111,28 +1110,24 @@ class nxFileInventoryTestCases(unittest2.TestCase):
             'Contents of basedirfile2.txt\n')
         open(cls.basepath+'basedirfile3.bin','wb+').write(\
             '\xff\xff\xfe\x00\xfe\x00\xff\x00\x00\x00')
-        os.chown(cls.basepath+'basedirfile3.bin', 7777, 7777)
         open(cls.basepath+'joedir0/joedir0file1.txt','w+').write(\
             'Contents of joedir0file1.txt\n')
         open(cls.basepath+'joedir0/joedir0file2.txt','w+').write(\
             'Contents of joedir0file2.txt\n')
         open(cls.basepath+'joedir0/joedir0file3.bin','wb+').write(\
             '\xff\xff\xfe\x00\xfe\x00\xff\x00\x00\x00')
-        os.chown(cls.basepath+'joedir0/joedir0file3.bin', 7777, 7777)
         open(cls.basepath+'joedir0/joedir1/joedir1file1.txt','w+').write(\
             'Contents of joedir1file1.txt\n')
         open(cls.basepath+'joedir0/joedir1/joedir1file2.txt','w+').write(\
             'Contents of joedir1file2.txt\n')
         open(cls.basepath+'joedir0/joedir1/joedir1file3.bin','wb+').write(\
             '\xff\xff\xfe\x00\xfe\x00\xff\x00\x00\x00')
-        os.chown(cls.basepath+'joedir0/joedir1/joedir1file3.bin', 7777, 7777)
         open(cls.basepath+'joedir0/joedir1/joedir2/joedir2file1.txt','w+').write(\
             'Contents of joedir2file1.txt\n')
         open(cls.basepath+'joedir0/joedir1/joedir2/joedir2file2.txt','w+').write(\
             'Contents of joedir2file2.txt\n')
         open(cls.basepath+'joedir0/joedir1/joedir2/joedir2file3.bin','wb+').write(\
             '\xff\xff\xfe\x00\xfe\x00\xff\x00\x00\x00')
-        os.chown(cls.basepath+'joedir0/joedir1/joedir2/joedir2file3.bin', 7777, 7777)
         os.makedirs(cls.basepath+'bobdir0/bobdir1/bobdir2/')
         open(cls.basepath+'bobdir0/bobdir0file1.txt','w+').write(\
             'Contents of bobdir0file1.txt\n')
@@ -1140,21 +1135,18 @@ class nxFileInventoryTestCases(unittest2.TestCase):
             'Contents of bobdir0file2.txt\n')
         open(cls.basepath+'bobdir0/bobdir0file3.bin','wb+').write(\
             '\xff\xff\xfe\x00\xfe\x00\xff\x00\x00\x00')
-        os.chown(cls.basepath+'bobdir0/bobdir0file3.bin', 7777, 7777)
         open(cls.basepath+'bobdir0/bobdir1/bobdir1file1.txt','w+').write(\
             'Contents of bobdir1file1.txt\n')
         open(cls.basepath+'bobdir0/bobdir1/bobdir1file2.txt','w+').write(\
             'Contents of bobdir1file2.txt\n')
         open(cls.basepath+'bobdir0/bobdir1/bobdir1file3.bin','wb+').write(\
             '\xff\xff\xfe\x00\xfe\x00\xff\x00\x00\x00')
-        os.chown(cls.basepath+'bobdir0/bobdir1/bobdir1file3.bin', 7777, 7777)
         open(cls.basepath+'bobdir0/bobdir1/bobdir2/bobdir2file1.txt','w+').write(\
             'Contents of bobdir2file1.txt\n')
         open(cls.basepath+'bobdir0/bobdir1/bobdir2/bobdir2file2.txt','w+').write(\
             'Contents of bobdir2file2.txt\n')
         open(cls.basepath+'bobdir0/bobdir1/bobdir2/bobdir2file3.bin','wb+').write(\
             '\xff\xfe\x00\x00\xff\xfd\x00\x00\x00\x00')
-        os.chown(cls.basepath+'bobdir0/bobdir1/bobdir2/bobdir2file3.bin', 7777, 7777)
         os.symlink(cls.basepath+'bobdir0/bobdir0file1.txt', cls.basepath+'basedirfilelink1.txt')
         os.symlink(cls.basepath+'bobdir0/bobdir1', cls.basepath+'basedirdirlink1')
         os.symlink(cls.basepath+'bobdir0/bobdir0file1.txt', cls.basepath+'joedir0/joedir0filelink1.txt')
@@ -1811,4 +1803,4 @@ if __name__ == '__main__':
     s9=unittest2.TestLoader().loadTestsFromTestCase(nxFileInventoryTestCases)
 #    s10=unittest2.TestLoader().loadTestsFromTestCase(nxAvailableUpdatesTestCases)
     alltests = unittest2.TestSuite([s1,s2,s3,s4,s5,s6,s7,s8])
-    unittest2.TextTestRunner(stream=sys.stdout,verbosity=3).run(s6)
+    unittest2.TextTestRunner(stream=sys.stdout,verbosity=3).run(alltests)
